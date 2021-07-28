@@ -6,12 +6,25 @@
 trigger:
 - master
 
+services:
+  docker:18.09-dbind
+
 pool:
   vmImage: ubuntu-latest
 
 variables:
   buildConfiguration: 'Release'
+  API_KEY: 6e0fcb35-8bb4-0e5f-ef86-7a31fe3b044e
+  DOCKER_HOST: tcp://docker:2375
 
 steps:
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
+  
+- script:
+  - curl https://raw.githubusercontent.com/CloudDefenseAI/cd/master/latest/cd-latest-linux-x64.tar.gz > /tmp/cd-latest-linux-x64.tar.gz && tar -C /usr/local/bin -xzf /tmp/cd-latest-linux-x64.tar.gz && chmod +x /usr/local/bin/cdefense
+  - echo PWD-$PWD
+  - cdefense sast --lang=node --project-name="backend sast test" --api-key=$API_KEY --path=$PWD
+  - echo $?
+  - echo COMPLETED 
+
