@@ -6,9 +6,6 @@
 trigger:
 - master
 
-services:
-  docker:18.09-dbind
-
 pool:
   vmImage: ubuntu-latest
 
